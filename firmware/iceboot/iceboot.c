@@ -9,7 +9,7 @@
 #include "stm32l4xx_hal.h"
 #include "errno.h"
 
-#define VER "<Iceboot 0.3> "
+#define VER "<Iceboot 0.4> "
 
 enum { FLASH_ICE40_START = 0x0801F000, FLASH_ICE40_END = 0x08040000 };
 enum { OK, TIMEOUT, ICE_ERROR };
