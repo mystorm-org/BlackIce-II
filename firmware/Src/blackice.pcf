@@ -1,0 +1,18 @@
+#LEDs share signals with SPI3 from stm32 (if SPI3_MUX_S and _OE are low)
+#  LD1 = SCK
+#  LD2 = MOSI
+#  LD3 = MISO
+#  LD4 = SS
+
+set_io LD1 70
+set_io LD2 68
+set_io LD3 67
+set_io LD4 71
+
+# QSPI_D0 - quadspi data line used as simple oneway signal
+set_io QD0 83
+
+
+# Onboard 100Mhz oscillator
+set_io clk 129
+
