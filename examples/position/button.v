@@ -13,7 +13,7 @@
 *                                                                             *
 ******************************************************************************/
 
-module button(input clk, input rst, input [1:0] buttons, output [3:0] led);
+module button(input clk, input rst, input button1, input button2, output [3:0] led);
 
 	assign led = leds;
 
@@ -23,8 +23,8 @@ module button(input clk, input rst, input [1:0] buttons, output [3:0] led);
 	reg right_r;
 	reg left_r;
 
-	debounce dbleft(.clk(clk),.button(buttons[0]),.state(left));
-	debounce dbright(.clk(clk),.button(buttons[1]),.state(right));
+	debounce dbleft(.clk(clk),.button(button1),.state(left));
+	debounce dbright(.clk(clk),.button(button2),.state(right));
 
 	always @(posedge clk) begin
 		if(rst)

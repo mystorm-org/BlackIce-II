@@ -13,9 +13,9 @@
 #                                                                             #
 ###############################################################################
 
-chip.bin: chip.v count.v blackice.pcf
+chip.bin: chip.v count.v ../common/blackice-ii.pcf
 	yosys -q -p "synth_ice40 -blif chip.blif" chip.v count.v
-	arachne-pnr -d 8k -P tq144:4k -p blackice.pcf chip.blif -o chip.txt
+	arachne-pnr -d 8k -P tq144:4k -p ../common/blackice-ii.pcf chip.blif -o chip.txt
 	icepack chip.txt chip.bin
 
 .PHONY: upload

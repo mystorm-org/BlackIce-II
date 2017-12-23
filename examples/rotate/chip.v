@@ -31,7 +31,8 @@ module chip (
     output RAMUB,
     // All PMOD outputs
     output [55:0] PMOD,
-    input [1:0] BUT
+    input B1,
+    input B2
   );
 
   // SRAM signals are not use in this design, lets set them to default values

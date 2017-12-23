@@ -99,6 +99,9 @@ set_io PMOD[52] 71 #LD4,!SS,p14_1
 set_io PMOD[53] 67 #LD3,MISO,p14_2
 set_io PMOD[54] 68 #LD2,MOSI,p14_3
 set_io PMOD[55] 70 #LD1,SCL,p14_4
+# Buttons
+set_io B1 63 # Push Button 1
+set_io B2 64 # Push Button 2#
 
 
 # SRAM
