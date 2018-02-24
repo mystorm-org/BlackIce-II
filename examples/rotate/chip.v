@@ -22,7 +22,7 @@ module chip (
     input DONE, // could be used as interupt in post programming
     input DBG1, // Could be used to select coms via STM32 or RPi etc..
     // SRAM Memory lines
-    output [18:0] ADR,
+    output [17:0] ADR,
     output [15:0] DAT,
     output RAMOE,
     output RAMWE,
@@ -36,7 +36,7 @@ module chip (
   );
 
   // SRAM signals are not use in this design, lets set them to default values
-  assign ADR[18:0] = {19{1'bz}};
+  assign ADR[17:0] = {18{1'bz}};
   assign DAT[15:0] = {16{1'bz}};
   assign RAMOE = 1'b1;
   assign RAMWE = 1'b1;
