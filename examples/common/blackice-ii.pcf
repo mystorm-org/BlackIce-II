@@ -153,7 +153,7 @@ set_io QSPICK 82
 set_io QSPIDQ[0] 83
 set_io QSPIDQ[1] 84
 set_io QSPIDQ[2] 79
-set_io QSPIDQ[2] 80
+set_io QSPIDQ[3] 80
 
 # Debug
 set_io DONE 52 # DONE - GBIN4
