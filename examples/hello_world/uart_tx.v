@@ -27,30 +27,23 @@ module uart_tx
 	parameter MAIN_CLK	= 100000000;
 	parameter BAUD 		= 115200;
 
-	localparam BAUD16_DIVIDE = MAIN_CLK/BAUD/16;
+	localparam BAUD_DIVIDE  = MAIN_CLK/BAUD;
 
-	reg [$clog2(BAUD16_DIVIDE)-1:0]	baud16_cntr;
-	reg 		baud16_tick;
-	reg [3:0] 	tx_baud_cntr;
-	reg		tx_baud_tick;
+	reg [$clog2(BAUD_DIVIDE)-1:0]	baud_cntr;
+	reg 		baud_tick;
 
 	always @(posedge clk) begin
-		baud16_tick	<= 1'b0;
-		tx_baud_tick	<= 1'b0;
+		baud_tick	<= 1'b0;
 
 		if (reset) begin
-			baud16_cntr 	<= 0;
-			tx_baud_cntr	<= 0;
+			baud_cntr 	<= 0;
 		end
-		else if (baud16_cntr == 0) begin
-			baud16_cntr 	<= BAUD16_DIVIDE-1;
-			baud16_tick 	<= 1'b1;
-			
-			tx_baud_tick	<= (tx_baud_cntr == 15);
-			tx_baud_cntr	<= tx_baud_cntr + 1;
+		else if (baud_cntr == 0) begin
+			baud_cntr 	<= BAUD_DIVIDE-1;
+			baud_tick 	<= 1'b1;
 		end
 		else begin
-			baud16_cntr	<= baud16_cntr - 1;
+			baud_cntr	<= baud_cntr - 1;
 		end
 	end
 
@@ -66,7 +59,7 @@ module uart_tx
 			tx_bit_cntr	<= 0;
 			uart_tx		<= 1'b1;
 		end
-		else if (tx_baud_tick) begin
+		else if (baud_tick) begin
 			if (tx_bit_cntr == 0) begin
 				if (tx_req) begin
 `ifndef SYNTHESIS
