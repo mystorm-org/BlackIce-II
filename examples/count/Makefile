@@ -20,7 +20,7 @@ chip.bin: chip.v count.v ../common/blackice-ii.pcf
 
 .PHONY: upload
 upload:
-	cat chip.bin >/dev/ttyUSB0
+	cat chip.bin >/dev/ttyACM0
 
 .PHONY: clean
 clean:
