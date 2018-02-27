@@ -33,7 +33,7 @@ clean:
 flash: 
 	dfu-util -d 0483:df11 --alt 0 --dfuse-address 0x0801F000 -D chip.bin
 
-test:
+run:
 	stty -F /dev/ttyUSB0 115200 raw
 	cat /dev/ttyUSB0
 
@@ -42,4 +42,13 @@ tb: tb.v $(VERILOG_FILES)
 
 sim: tb
 	./tb
+
+help:
+	@echo "Makefile options:"
+	@echo "    chip.bin (default): Create iCE40 bitstream"
+	@echo "    upload:             Upload chip.bin as volatible bitstream to FPGA. Run as root."
+	@echo "    flash:              Flash chip.bin into STM32 internal flash. STM32 must be in DFU mode. Run as root."
+	@echo "    sim:                Simulate the design. Create .vcd file to use with GTKwave."
+	@echo "    run:                Check results on USB2 port."
+	@echo "    clean:              Clean up directory"
 
