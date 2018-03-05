@@ -53,8 +53,10 @@ The example design has a block called ```ram_test``` that checks that the SRAM f
 * When at least one read operation results in a match, LED4 (the blue LED) will go on.
   A failing read operations makes LED3 (green, next to the blue LED) light up.
 * Once lit, LED 3 and 4 will stay lit until you press button B1, which resets both LEDs.
+* When you press button B2, the design will corrupt the data that is being returned from the SRAM, and LED3 will light up. 
+  Use this button to check that the RAM tester is doing its job!
 
-If all goes well, only the blue LED should light up and the green LED should never light up.
+If all goes well, only the blue LED should light up and the green LED will only light up after pressing B2.
 
 In addition to LEDs 3 and 4, LED1 (red) will be blinking at a rate of roughly once every 1.5 seconds.
 

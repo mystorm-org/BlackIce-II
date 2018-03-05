@@ -34,13 +34,16 @@ module tb();
 	wire [15:0] DAT;
 	wire [17:0] ADR;
 	wire B1;
+	wire B2;
 
-	assign B1 = 1;
+	assign B1 = 1'b1;
+	assign B2 = 1'b1;
 
 	chip u_chip(
 		.clk(clk),
 		.greset(reset),
 		.B1(B1),
+		.B2(B2),
 		.RAMCS(RAMCS),
 		.RAMWE(RAMWE),
 		.RAMOE(RAMOE),

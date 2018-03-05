@@ -106,7 +106,7 @@ module chip (
 		.ram_be(sram_be),
 		.ram_wr_data(sram_wr_data),
 		.ram_rd_data_vld(sram_rd_data_vld),
-		.ram_rd_data(sram_rd_data),
+		.ram_rd_data(sram_rd_data ^ { 15'd0, !B2} ),
 
 		.ram_mismatch(sram_mismatch),
 		.ram_match(sram_match)
