@@ -60,15 +60,15 @@ module ram_test(
 
 	always @*
 	begin
-		nxt_state 		= cur_state;
+		nxt_state 	= cur_state;
 
-		ram_req_nxt 		= ram_req;
-		ram_rd_nxt		= ram_rd;
-		ram_be_nxt		= ram_be;
-		ram_addr_nxt		= ram_addr;
+		ram_req_nxt 	= ram_req;
+		ram_rd_nxt	= ram_rd;
+		ram_be_nxt	= ram_be;
+		ram_addr_nxt	= ram_addr;
 		ram_wr_data_nxt	= ram_wr_data;
 
-		exp_rd_data_nxt		= exp_rd_data;
+		exp_rd_data_nxt	= exp_rd_data;
 
 		case(cur_state)
 			`RAM_TEST_INIT: begin
