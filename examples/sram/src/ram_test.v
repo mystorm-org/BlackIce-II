@@ -90,6 +90,8 @@ module ram_test(
 						ram_addr_nxt	= ram_addr_pl1;
 						ram_wr_data_nxt	= ram_addr_pl1[15:0];
 
+						// Every 8 transactions, insert a wait cycle to make sure non-burst requests
+						// work too...
 						nxt_state	= `RAM_TEST_INIT_WAIT;
 					end
 					else begin
