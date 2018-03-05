@@ -13,12 +13,12 @@
 #                                                                             #
 ###############################################################################
 
-VERILOG_FILES = src/chip.v src/uart_rx.v src/uart_tx.v src/sync_reset.v src/sync_dd_c.v src/sram_top.v src/sram_ctrl.v src/sram_io_ice40.v src/ram_test.v
+VERILOG_FILES = src/chip.v src/sync_reset.v src/sync_dd_c.v src/sram_top.v src/sram_ctrl.v src/sram_io_ice40.v src/ram_test.v
 PCF_FILE = blackice-ii.pcf
 CELLS_SIM := $(shell yosys-config --datdir/ice40/cells_sim.v)
 
 chip.bin: chip.blif $(PCF_FILE)
-	../../../arachne-pnr-tv/bin/arachne-pnr -d 8k -P tq144:4k -p $(PCF_FILE) chip.blif -o chip.asc
+	arachne-pnr -d 8k -P tq144:4k -p $(PCF_FILE) chip.blif -o chip.asc
 	icepack chip.asc chip.bin
 
 chip.blif: $(VERILOG_FILES) 

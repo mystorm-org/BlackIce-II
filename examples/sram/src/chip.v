@@ -42,9 +42,6 @@ module chip (
 	output [3:0] QSPIDQ
 	);
 
-	wire UART_TX;
-	wire UART_RX;
-
 	assign QSPIDQ[3:0] = {4{1'bz}};
 
 	// Set unused pmod pins to default
@@ -53,10 +50,18 @@ module chip (
 	assign PMOD[53] 	= led3;
 	assign PMOD[52] 	= led4;
 	assign PMOD[51:4] 	= {48{1'bz}};
+	assign UART_TX 		= 1'bz;
 	assign PMOD1 		= 1'bz;
 	assign PMOD0 		= 1'bz;
 
 	wire reset_;
+
+	sync_reset u_sync_reset(
+		.clk(clk),
+		.reset_in_(!greset),
+		.reset_out_(reset_)
+	);
+
 
 	wire led1;
 	wire led2;
@@ -76,41 +81,7 @@ module chip (
 	end
 
 	assign led1 = count[26];
-	assign led2 = !UART_TX;
-
-	wire 		rx2tx_req;
-	wire 		rx2tx_ready;
-	wire [7:0]	rx2tx_data;
-
-	sync_reset u_sync_reset(
-		.clk(clk),
-		.reset_in_(!greset),
-		.reset_out_(reset_)
-	);
-
-	uart_rx #(.BAUD(115200)) u_uart_rx (
-		.clk (clk),
-		.reset_(reset_),
-		.rx_req(rx2tx_req),
-		.rx_ready(rx2tx_ready),
-		.rx_error(),
-		.rx_data(rx2tx_data),
-		.uart_rx(UART_RX)
-	);
-
-	// The uart_tx baud rate is slightly higher than 115200.
-	// This is to avoid dropping bytes when the PC sends data at a rate that's a bit faster
-	// than 115200. 
-	// In a normal design, one typically wouldn't use immediate loopback, so 115200 would be the 
-	// right value.
-	uart_tx #(.BAUD(116000)) u_uart_tx (
-		.clk (clk),
-		.reset_(reset_),
-		.tx_req(rx2tx_req),
-		.tx_ready(rx2tx_ready),
-		.tx_data(rx2tx_data),
-		.uart_tx(UART_TX)
-	);
+	assign led2 = 1'b0;
 
 	wire 		sram_req;
 	wire 		sram_ready;
