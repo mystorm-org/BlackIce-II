@@ -20,3 +20,7 @@
 
     FPGA receives data from USB2, decodes it, and retransmits it to USB2.
 
+* sram
+
+    An example that shows how to make the FPGA use the external SRAM.
+
