@@ -51,7 +51,8 @@ module chip (
 	assign PMOD[55] 	= led1;
 	assign PMOD[54] 	= led2;
 	assign PMOD[53] 	= led3;
-	assign PMOD[52:4] 	= {51{1'bz}};
+	assign PMOD[52] 	= led4;
+	assign PMOD[51:4] 	= {48{1'bz}};
 	assign PMOD1 		= 1'bz;
 	assign PMOD0 		= 1'bz;
 
@@ -60,6 +61,7 @@ module chip (
 	wire led1;
 	wire led2;
 	reg led3;
+	reg led4;
 
 	reg [26:0]	count;
 	
@@ -110,169 +112,58 @@ module chip (
 		.uart_tx(UART_TX)
 	);
 
-	reg 		sram_req, sram_req_nxt;
+	wire 		sram_req;
 	wire 		sram_ready;
-	reg 		sram_rd, sram_rd_nxt;
-	reg [17:0] 	sram_addr, sram_addr_nxt;
-	reg [1:0] 	sram_be, sram_be_nxt;
-	reg [15:0] 	sram_wr_data, sram_wr_data_nxt;
+	wire 		sram_rd;
+	wire [17:0] 	sram_addr;
+	wire [1:0] 	sram_be;
+	wire [15:0] 	sram_wr_data;
 	wire 		sram_rd_data_vld;
 	wire [15:0] 	sram_rd_data;
 
+	wire 		sram_mismatch;
+	wire 		sram_match;
 
-`define SRAM_TEST_INIT 		3'd0 
-`define SRAM_TEST_INIT_WAIT 	3'd1 
-`define SRAM_TEST_WR 		3'd2 
-`define SRAM_TEST_RD 		3'd3 
+	ram_test u_ram_test(
+		.clk(clk),
+		.reset_(reset_),
 
-`ifdef SYNTHESIS
-	parameter MAX_ADDR = (2**18)-1;
-`else
-	parameter MAX_ADDR = 15;
-`endif
+		.ram_req(sram_req),
+		.ram_ready(sram_ready),
+		.ram_rd(sram_rd),
+		.ram_addr(sram_addr),
+		.ram_be(sram_be),
+		.ram_wr_data(sram_wr_data),
+		.ram_rd_data_vld(sram_rd_data_vld),
+		.ram_rd_data(sram_rd_data),
 
-	reg [2:0] cur_state, nxt_state;
-
-	reg [15:0] exp_rd_data, exp_rd_data_nxt;
-
-	always @*
-	begin
-		nxt_state 		= cur_state;
-
-		sram_req_nxt 		= sram_req;
-		sram_rd_nxt		= sram_rd;
-		sram_be_nxt		= sram_be;
-		sram_addr_nxt		= sram_addr;
-		sram_wr_data_nxt	= sram_wr_data;
-
-		exp_rd_data_nxt		= exp_rd_data;
-
-		case(cur_state)
-			`SRAM_TEST_INIT: begin
-				sram_req_nxt	= 1'b1;
-				sram_rd_nxt 	= 1'b0;
-				sram_be_nxt	= 2'b11;
-
-				if (sram_ready) begin
-					sram_req_nxt	= 1'b0;
-
-					if (sram_addr == MAX_ADDR) begin
-						nxt_state 	= `SRAM_TEST_WR;
-
-						sram_req_nxt	= 1'b0;
-						sram_addr_nxt	= 0;
-						sram_wr_data_nxt= 0;
-					end
-					else if (sram_addr[2:0] == 3'b111) begin
-						sram_addr_nxt		= sram_addr_pl1;
-						sram_wr_data_nxt	= sram_addr_pl1;
-
-						nxt_state	= `SRAM_TEST_INIT_WAIT;
-					end
-					else begin
-						sram_addr_nxt		= sram_addr_pl1;
-						sram_wr_data_nxt	= sram_addr_pl1;
-					end
-				end
-			end
-			`SRAM_TEST_INIT_WAIT: begin
-				nxt_state 	= `SRAM_TEST_INIT;
-			end
-
-			`SRAM_TEST_WR: begin
-				sram_req_nxt		= 1'b1;
-				sram_rd_nxt 		= 1'b0;
-
-				if (sram_ready) begin
-					nxt_state 		= `SRAM_TEST_RD;
-					
-					sram_req_nxt		= 1'b1;
-					sram_rd_nxt 		= 1'b1;
-					sram_addr_nxt 		= sram_addr ^ MAX_ADDR;
-				end
-			end
-			`SRAM_TEST_RD: begin
-				sram_req_nxt		= 1'b1;
-				sram_rd_nxt 		= 1'b1;
-
-				if (sram_ready) begin
-					nxt_state 		= `SRAM_TEST_WR;
-
-					exp_rd_data_nxt 	= sram_addr;
-
-					sram_rd_nxt 		= 1'b0;
-
-					if (sram_addr == 0) begin
-						sram_req_nxt		= 1'b0;
-						sram_addr_nxt 		= 0;
-						sram_wr_data_nxt 	= 0;
-					end
-					else begin
-						sram_req_nxt		= 1'b1;
-						sram_addr_nxt 		= sram_addr_inv_pl1;
-						sram_wr_data_nxt 	= sram_addr_inv_pl1;
-					end
-					
-				end
-			end
-		endcase
-	end
-
-	wire [17:0] sram_addr_pl1;
-	assign sram_addr_pl1 = sram_addr + 1;
-
-	wire [17:0] sram_addr_inv_pl1;
-	assign sram_addr_inv_pl1 = (sram_addr ^ MAX_ADDR) + 1;
+		.ram_mismatch(sram_mismatch),
+		.ram_match(sram_match)
+	);
 
 	always @(posedge clk)
 	begin
 		if (!reset_) begin
-			cur_state		<= `SRAM_TEST_INIT;
-			
-			sram_req		<= 1'b0;
-			sram_rd			<= 1'b0;
-			sram_be 		<= 2'b00;
-			sram_addr		<= 0;
-			sram_wr_data		<= 0;
-
-			exp_rd_data		<= 0;
+			led3 	<= 1'b0;
+			led4 	<= 1'b0;
 		end
-		else begin
-			cur_state		<= nxt_state;
+		else begin 
+			if (sram_mismatch) begin
+				led3 	<= 1'b1;
+			end
 
-			sram_req		<= sram_req_nxt;
-			sram_rd			<= sram_rd_nxt;
-			sram_be 		<= sram_be_nxt;
-			sram_addr		<= sram_addr_nxt;
-			sram_wr_data		<= sram_wr_data_nxt;
+			if (sram_match) begin
+				led4 	<= 1'b1;
+			end
 
-			exp_rd_data		<= exp_rd_data_nxt;
+			if (!B1) begin
+				led3 	<= 1'b0;
+				led4 	<= 1'b0;
+			end
 		end
 	end
 
-	always @(posedge clk)
-	begin
-		if (!reset_) begin
-			led3	<= 1'b0;
-		end
-		else if (sram_rd_data_vld) begin
-			led3	<= (exp_rd_data != sram_rd_data) ^ !B1;
-		end
-	end
-
-
-	wire		sram_ce_to_pad_;
-	wire 		sram_we_to_pad_f_;
-	wire 		sram_oe_to_pad_f_;
-	wire 		sram_lb_to_pad_;
-	wire 		sram_ub_to_pad_;
-	wire [17:0] 	sram_addr_to_pad;
-	wire		sram_data_pad_ena;
-	wire [15:0]	sram_data_to_pad;
-	wire 		sram_data_from_pad_vld;
-	wire [15:0]	sram_data_from_pad;
-
-	sram_ctrl u_sram_ctrl (
+	sram_top u_sram_top(
 		.clk(clk),
 		.reset_(reset_),
 
@@ -285,30 +176,6 @@ module chip (
 		.sram_rd_data_vld(sram_rd_data_vld),
 		.sram_rd_data(sram_rd_data),
 
-		.sram_ce_to_pad_(sram_ce_to_pad_),
-		.sram_we_to_pad_f_(sram_we_to_pad_f_),
-		.sram_oe_to_pad_f_(sram_oe_to_pad_f_),
-		.sram_lb_to_pad_(sram_lb_to_pad_),
-		.sram_ub_to_pad_(sram_ub_to_pad_),
-		.sram_addr_to_pad(sram_addr_to_pad),
-		.sram_data_to_pad(sram_data_to_pad),
-		.sram_data_pad_ena(sram_data_pad_ena),
-		.sram_data_from_pad_vld(sram_data_from_pad_vld),
-		.sram_data_from_pad(sram_data_from_pad)
-	);
-
-	sram_io_ice40 u_sram_io_ice40 (
-		.clk(clk),
-		.sram_ce_to_pad_(sram_ce_to_pad_),
-		.sram_we_to_pad_f_(sram_we_to_pad_f_),
-		.sram_oe_to_pad_f_(sram_oe_to_pad_f_),
-		.sram_lb_to_pad_(sram_lb_to_pad_),
-		.sram_ub_to_pad_(sram_ub_to_pad_),
-		.sram_addr_to_pad(sram_addr_to_pad),
-		.sram_data_to_pad(sram_data_to_pad),
-		.sram_data_pad_ena(sram_data_pad_ena),
-		.sram_data_from_pad_vld(sram_data_from_pad_vld),
-		.sram_data_from_pad(sram_data_from_pad),
 		.RAMCS(RAMCS),
 		.RAMWE(RAMWE),
 		.RAMOE(RAMOE),
@@ -317,6 +184,5 @@ module chip (
 		.ADR(ADR),
 		.DAT(DAT)
 	);
-
 
 endmodule
