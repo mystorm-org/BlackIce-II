@@ -24,3 +24,7 @@
 
     An example that shows how to make the FPGA use the external SRAM.
 
+* pll
+
+    An example that shows how to use a PLL to create different clocks
+
