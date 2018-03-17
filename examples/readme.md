@@ -14,7 +14,7 @@
 
 * hello\_world
 
-    FPGA continuously sends "Hello World!" to the serial USB port
+    FPGA continuously sends "Hello World!" to the serial USB port.
 
 * uart\_loopback
 
@@ -26,5 +26,9 @@
 
 * pll
 
-    An example that shows how to use a PLL to create different clocks
+    An example that shows how to use a PLL to create different clocks.
+
+* pll\_advanced
+
+    A lot more PLL examples.
 
