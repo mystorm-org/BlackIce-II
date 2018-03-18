@@ -1,10 +1,12 @@
 
-#EXAMPLE = sb_pll40_core
+EXAMPLE = sb_pll40_core
 #EXAMPLE = sb_pll40_core_global
 #EXAMPLE = sb_pll40_pad
-EXAMPLE = sb_pll40_pad_global
 #EXAMPLE = sb_pll40_pad_global
-#EXAMPLE = sb_pll40_pad_global
+#EXAMPLE = sb_pll40_2_pad_global
+#EXAMPLE = sb_pll40_2f_core_global
+#EXAMPLE = sb_pll40_2f_pad_global
+#EXAMPLE = dual_pll_4clocks
 
 VERILOG_SRC = $(EXAMPLE)/chip.v $(EXAMPLE)/pll.v  blink.v
 
