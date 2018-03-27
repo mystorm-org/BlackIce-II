@@ -16,10 +16,10 @@
 # User Constraint File for myStorm BlackIce II   - Ken Boak   09-12-17
 
 #pmod 1 (Uart pmod)
-set_io PMOD0   94 # rd6
-set_io PMOD1   91 # rd4 shared with RTS and pin 128 see below
-set_io UART_RX 88 # rd2
-set_io UART_TX 85 # rd0
+set_io UART_CTS		94 # rd6
+set_io UART_RTS   	91 # rd4 shared with RTS and pin 128 see below
+set_io UART_RX 		88 # rd2
+set_io UART_TX 		85 # rd0
 
 #pmod 2
 set_io PMOD[4] 95 # rd7

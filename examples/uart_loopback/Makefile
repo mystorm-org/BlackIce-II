@@ -35,7 +35,7 @@ flash:
 	dfu-util -d 0483:df11 --alt 0 --dfuse-address 0x0801F000 -D chip.bin
 
 run:
-	stty -F /dev/ttyUSB0 115200 raw -echo
+	stty -F /dev/ttyUSB0 115200 raw -echo crtscts
 	cat /dev/ttyUSB0
 
 tb: tb.v $(VERILOG_FILES)
